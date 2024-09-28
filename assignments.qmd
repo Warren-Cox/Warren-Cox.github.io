@@ -1,0 +1,137 @@
+---
+title: "EPPS 6356"
+---
+
+## Assignment 1 (9/11/2024)
+
+### Question 1
+
+![[Generative art by Katharina Brunner](https://katharinabrunner.de/)](GenArt3.png){fig-align="center" width="412"}
+
+### Question 2
+
+For the file Fall.R click [here](Fall.R)
+
+### Question 3
+
+The following is an example of a graphic found in the article [**Mapping the Political Landscape: Toward a GIS Analysis of Environmental and Social Difference**](https://link.springer.com/article/10.1007/s10816-011-9126-z#Fig7)
+
+![](BadGraphic%20Example.png){fig-align="center" width="641"}
+
+The graphic shows the location of buildings and terraces over space, with some specific location labels to add more data. The biggest hindrance to the success of this graphic is the limited use of color, font and texture. It is not easy to distinguish between pieces of information in the graphic since it is largely just dependent on line thickness. Black font on top of multiple types of black elements, over a grey scale background ultimately make a cluttered and confusing display that seems overly compacted. The strict border imposed on the graphic makes it well contain but also contributes to this feeling. The location identifiers around the map are both repeated and not necessary for the information displayed. An inset map could be employed instead as a separate graphic. The text over the graphic adds limited value as well. They are meant to represent building type areas, but without any boundaries visible or a link to specific buildings, they add almost no novel data.
+
+## Assignment 2 (9/25/2024)
+
+Using Murrell's Functions on HPI Data
+
+```{r, echo=FALSE}
+library(readxl)
+
+data <- read_excel("C:\\Users\\warre\\Downloads\\HPI_2024_public_dataset.xlsx", sheet = "1. All countries", range = "A9:L158")
+
+
+print(names(data))
+
+us_data <- data.frame(
+  Year = c(2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021),
+  Life_Expectancy = c(77.8, 78.1, 78.2, 78.6, 78.8, 78.8, 78.9, 79.0, 79.0, 78.9, 78.8, 78.8, 79.0, 79.1, 77.4, 77.2),
+  Ladder_of_Life = c(7.18, 7.51, 7.28, 7.16, 7.16, 7.12, 7.03, 7.25, 7.15, 6.86, 6.80, 6.99, 6.88, 6.94, 7.03, 6.96),
+  Carbon_Footprint = c(27.20, 26.97, 25.64, 23.40, 23.97, 23.56, 22.57, 22.72, 22.63, 22.10, 21.49, 21.29, 21.84, 21.17, 18.96, 19.59),
+  HPI = c(28.26, 29.70, 29.78, 31.20, 30.79, 30.88, 31.34, 32.05, 31.69, 30.81, 31.00, 31.89, 30.98, 31.84, 33.22, 32.12),
+  HPI_Rank = c(NA, 85, 86, 86, 91, 94, 98, 94, 101, 101, 100, 103, 111, 109, 104, 102)
+)
+
+van_data <- data.frame(
+  Year = c(2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021),
+  Life_Expectancy = c(69.5, 69.5, 69.6, 69.7, 69.6, 69.6, 69.5, 69.5, 69.5, 69.5, 69.7, 69.7, 69.8, 69.9, 70.3, 70.4),
+  Ladder_of_Life = c(NA, NA, NA, NA, NA, NA, NA, 6.47, 6.55, 6.63, 6.71, 6.80, 6.88, 6.96, 7.04, 7.12),
+  Carbon_Footprint = c(3.50, 3.46, 3.41, 3.37, 3.32, 3.26, 3.20, 3.15, 3.09, 3.04, 2.99, 2.94, 2.90, 2.85, 2.59, 2.62),
+  HPI = c(NA, NA, NA, NA, NA, NA, NA, 50.89, 51.48, 52.21, 53.03, 53.76, 54.52, 55.28, 57.21, 57.86),
+  HPI_Rank = c(NA, NA, NA, NA, NA, NA, NA, 13, 13, 9, 7, 7, 4, 3, 1, 1)
+)
+
+car_data <- data.frame(
+  Year = c(2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 
+           2016, 2017, 2018, 2019, 2020, 2021),
+  Life_Expectancy = c(46.9, 47.4, 48.0, 48.6, 49.3, 49.9, 50.7, 50.9, 
+                      50.6, 52.8, 53.5, 53.7, 54.4, 55.0, 54.6, 
+                      53.9),
+  Ladder_of_Life = c(NA, 4.16, NA, NA, 3.57, 3.68, NA, NA, NA, NA, 
+                     2.69, 3.48, NA, NA, 3.10, 3.10),
+  Carbon_Footprint = c(2.99, 2.99, 3.00, 1.82, 1.87, 2.01, 1.89, 
+                       1.89, 1.86, 1.92, 2.00, 1.95, 1.94, 1.87, 
+                       1.79, 1.83),
+  HPI = c(NA, 13.76, NA, NA, 12.87, 14.00, NA, NA, NA, NA, 
+          10.77, 15.93, NA, NA, 14.34, 13.70),
+  HPI_Rank = c(NA, 116, NA, NA, 124, 138, NA, NA, NA, NA, 
+               140, 144, NA, NA, 147, 147)
+)
+
+
+par(mfrow=c(2, 2))
+
+# Line Graph
+par(las=1, mar=c(4, 4, 2, 4), cex=.7) 
+plot.new()
+plot.window(range(us_data$Year), c(10, 60))
+lines(us_data$Year, us_data$HPI)
+lines(van_data$Year, van_data$HPI)
+lines(car_data$Year, car_data$HPI)
+points(us_data$Year, us_data$HPI, pch=16, cex=1.5) # Try different cex value?  
+points(van_data$Year, van_data$HPI, pch=21, bg="white", cex=1.5)
+points(car_data$Year, car_data$HPI, pch=21, bg = "black", cex=1.5)# Different background color
+par(col="gray50", fg="gray50", col.axis="gray50")
+axis(1, at=seq(us_data$Year[1], us_data$Year[length(us_data$Year)], 3)) # What is the first number standing for?
+axis(2, at=seq(10, 60, 5))
+legend("topleft",                              # Position
+       legend = c("US HPI", "Vanuatu HPI", "Cnt African Rep"),  # Legend text                  # Colors corresponding to lines
+       pch = c(16, 21, 21),                          # Point types
+       pt.bg = c("grey50", "white","black"),              # Background colors for filled points
+       bty = "n") 
+mtext("Year", side=1, line=2, cex=0.8)
+mtext("HPI Value", side=2, line=2.5, las=0, cex=0.8)
+
+#Histogram
+HPI <- data$HPI
+x <- seq(min(HPI, na.rm=TRUE)-5, max(HPI, na.rm=TRUE)+3)
+dn <- dnorm(x)
+par(mar=c(4.5, 4.1, 3.1, 0))
+hist(HPI, breaks=seq(10,60,1), ylim=c(0, 0.05),
+     col="gray80", freq=FALSE)
+lines(x, dnorm(x, mean=mean(HPI, na.rm=TRUE), sd=sd(HPI, na.rm=TRUE)), lwd=2, col="black")
+par(mar=c(5.1, 4.1, 4.1, 2.1))
+
+# Piechart
+par(mar=c(0, 2, 1, 2), xpd=FALSE, cex=0.5)
+category_sums <- aggregate(`Carbon Footprint (tCO2e)` ~ Continent, data = data, sum)
+print(category_sums)
+#key 1-South Am., 2-North Am. and Australia, 3-Europe,4-Middle East,5-Africa,6-West Asia,7-Central Asia,8-East Asia,
+category_sums$names <- c("South Am.", "North Am. and AUS",
+                      "Europe", "Middle East", "Africa", "West Asia","Central Asia", "East Asia")
+
+pie(category_sums$`Carbon Footprint (tCO2e)`, labels = category_sums$names, col = gray(seq(0.3,1.0,length=6))) 
+title("Share of Carbon Footprint by Continent", line = -3.5)
+
+par(mar=c(4.5, 4.1, 3.1, 0))
+mean_gdp <- mean(data$`GDP per capita ($)`, na.rm = TRUE)  # Calculate the mean GDP
+data$gdp_category <- ifelse(data$`GDP per capita ($)` <= mean_gdp, "Bottom 50%", "Top 50%")
+boxplot(data$`Carbon Footprint (tCO2e)` ~ data$gdp_category, data = data,
+        main = "Carbon Footprint by GDP Category",
+        xlab = "GDP Category",
+        ylab = "Carbon Footprint",
+        col = c("darkgrey", "lightgrey"))
+```
+
+### Page About Big Data Pitfalls
+In the modern digital age, the increasing availability of large datasets, commonly referred to as "big data," has revolutionized the way organizations, governments, and researchers analyze information. Big data holds enormous potential to uncover trends, inform decision-making, and improve predictive models across a wide array of fields. However, despite these advantages, the use of big data also presents significant risks, particularly when it comes to overfitting and overparameterization. If left unchecked, these issues can lead to inaccurate predictions, misguided conclusions, and the erosion of public trust in data-driven models. The case of Google Flu Trends serves as a cautionary tale, highlighting the dangers of relying too heavily on big data without sufficient consideration of its limitations.
+Overfitting occurs when a model is excessively complex and begins to capture not only the underlying patterns in the data but also the noise and random fluctuations present in the dataset. In other words, an overfit model is tailored too closely to the training data, which compromises its ability to generalize to new, unseen data. This problem is particularly common in big data environments, where the sheer volume of information can lead to the development of highly intricate models. While such models may perform exceptionally well on historical datasets, they often fail to provide accurate predictions when applied to new or evolving situations.
+Overparameterization, a closely related issue, occurs when a model incorporates an excessive number of parameters relative to the amount of useful information in the data. It can result from throwing variables at a problem and seeing what sticks, rather than stopping and asking why. This leads to a situation where the model becomes overly sensitive to minor changes or irrelevant features in the dataset. In the context of big data, the abundance of variables available for analysis may tempt researchers to create models with a vast number of parameters, especially if they seemingly predict trends. However, doing so increases the risk of producing a model that lacks robustness and overfits the data. The more parameters a model has, the more likely it is to describe spurious correlations that do not reflect true underlying relationships.
+Additionally, it is important to know that while large, big data is not the result of the entire population. It falls susceptible to sampling error and bias. If this factor is ignored the model runs the risk of only working on similar datasets, especially those it was trained on. Bigger is not always better and well implemented samples remain statistically more significant than big data analytics. Big data promises a model, however, that is cheaper and easier to produce and update than traditional methods. These benefits must be weighed against the potential issues in sampling, misrepresentation, and loss of logical reasoning. 
+Google Flu Trends fell victim to these mishaps in big data use. The model relied heavily on a wide range of search terms, which regularly were updated, many of which turned out to be unrelated or only tangentially associated with flu activity. As the model grew more complex, it became increasingly sensitive to shifts in search behavior that did not correspond to real-world flu cases. Moreover, the data it relied on was not static—human behavior, particularly online search behavior, evolves over time. IT was also susceptible to googles own search algorithm suggestions, which manipulated users search frequencies. This evolution rendered GFT's predictions increasingly unreliable as the model struggled to adapt to new patterns in the data.
+The Google Flu debacle highlights the importance of maintaining a balanced approach to big data analysis. While big data offers powerful opportunities to uncover patterns and make predictions, it is crucial that researchers and data scientists remain mindful of the risks posed by misusing statistics. Models must be kept as simple as possible while still capturing meaningful patterns. Cross-validation techniques should be employed to test the model's performance on new data, ensuring that it is not overly tailored to the idiosyncrasies of the training set. Furthermore, integrating domain knowledge into the modeling process can help to ensure that the parameters used are grounded in reality rather than being driven by data alone.
+In conclusion, big data, when used properly, has the potential to drive significant advancements in predictive analytics and decision-making. However, it also presents considerable dangers, especially when complex models are allowed to overfit or become overparameterized. The Google Flu Trends case provides a clear illustration of how these issues can arise, even in high-profile projects. As data continues to grow in volume and variety, it is imperative that researchers adopt rigorous practices to ensure that their models remain accurate, reliable, and generalizable to real-world scenarios.
+
+### Response to Wickham Video 
+
+Wickham showcases they R packages that make up the tidy verse. He focuses especially on the package ggplot2 the premier R graphic maker. This package builds of the conceptual ideas from the Grammar of Graphics which is a book providing the fundamental components of digital graphic creation. R is the practical implementation of the concepts discussed in this book and allows users to programmatically create graphics built of graphical components. 
+He focuses on this package and the reason a programing approach is ideal for graphic creation. He stresses the ease of explanation and reproduction that comes with programing graphics. 
