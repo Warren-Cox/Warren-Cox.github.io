@@ -1,6 +1,0 @@
----
-title: "My Website"
-author: "Warren Cox"
----
-
-Welcome to my Website!
